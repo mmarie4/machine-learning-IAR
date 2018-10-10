@@ -5,13 +5,23 @@ namespace cleaner{
     dp::dp(world const& w, double epsilon, double gamma) : w(w), epsilon(epsilon), gamma(gamma){}
 
     void dp::solve(){
-      //TODO complete
+      // processus itératif qui va itérativement appeler backup pour atteindre la bonne valeur de Vf
+      // il faut aussi actualiser vf_copy
+      // condition d'arret : distance entre vf et l'etape d'après < epsilon
+      int error = 1000;
+      while(error < epsilon) {
+        copy();
+        backup();
+        error = distance();
+      }
+      // on donne le vf final au robot
     }
 
     double dp::getValueAt(int s) const{
       return this->vf.at(s);
     }
 
+/*
     void dp::backup(){
       for(int s=0; s<this->w.getNumStates(); ++s){
         this->vf[s] = MIN;
@@ -22,6 +32,11 @@ namespace cleaner{
           this->vf[s] = std::max(this->vf[s], value);
         }
       }
+    }
+*/
+
+    void dp::backup() {
+      // calcul d'une itération
     }
 
     void dp::init(){
