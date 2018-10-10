@@ -9,7 +9,8 @@ namespace cleaner{
       // il faut aussi actualiser vf_copy
       // condition d'arret : distance entre vf et l'etape d'après < epsilon
       int error = 1000;
-      while(error < epsilon) {
+      init();
+      while(error > epsilon) {
         copy();
         backup();
         error = distance();
@@ -22,11 +23,11 @@ namespace cleaner{
     }
 
 
-      // Backup : calcul d'une itération
-      // Il faut definir une policy à la con au début (quelles actions associées à un état)
-      // Calculer Vt
-      // Puis il faut améliorer la policy (voir les slides)
-      // --> on peut faire les deux dans une seule boucle
+    // Backup : calcul d'une itération
+    // Il faut definir une policy à la con au début (quelles actions associées à un état)
+    // Calculer Vt
+    // Puis il faut améliorer la policy (voir les slides)
+    // --> on peut faire les deux dans une seule boucle
     void dp::backup(){
       for(int s=0; s<this->w.getNumStates(); ++s){
         this->vf[s] = MIN;

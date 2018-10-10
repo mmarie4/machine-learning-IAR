@@ -45,9 +45,9 @@ TARGET				:=	$(BINDIR)/robot_cleaner
 #-----------------------------------------------------------------------------------------------------
 
 ifeq ($(UNAME_S), Darwin)
-	CXX	:=	gcc
+	CXX	:=	g++
 else
-	CXX	:=	gcc
+	CXX	:=	g++
 endif
 
 #-----------------------------------------------------------------------------------------------------
@@ -94,7 +94,7 @@ OBJ_NO_MAIN		:=	$(filter-out $(OBJDIR)/main.o,$(OBJ))
 #-----------------------------------------------------------------------------------------------------
 # Folder lists
 #-----------------------------------------------------------------------------------------------------
-INCDIRS				:=	$(shell find include/**/* -name '*.hpp' -exec dirname {} \; | sort | uniq)
+INCDIRS				:=	$(shell find include/* -name '*.hpp' -exec dirname {} \; | sort | uniq)
 INCLIST				:=	$(patsubst include/%, -isystem include/%, $(INCDIRS))
 BINLIST				:=	$(patsubst include/%, $(BINDIR)/%, $(INCDIRS))
 INC						:=	-isystem include $(INCLIST)
