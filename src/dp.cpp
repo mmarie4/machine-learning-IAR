@@ -13,7 +13,15 @@ namespace cleaner{
     }
 
     void dp::backup(){
-      //TODO complete
+      for(int s=0; s<this->w.getNumStates(); ++s){
+        this->vf[s] = MIN;
+        for(int a=0; a<action::END; a++){
+          double value = w.reward(w.getState(s), static_cast<action>(a));
+          for(int ss=0; ss<this->w.getNumStates(); ++ss)
+            value += this->gamma * w.probability(w.getState(s), static_cast<action>(a), w.getState(ss)) * this->vf_copy[ss];
+          this->vf[s] = std::max(this->vf[s], value);
+        }
+      }
     }
 
     void dp::init(){
