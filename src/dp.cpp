@@ -37,6 +37,7 @@ namespace cleaner{
 
     void dp::backup() {
       // calcul d'une itération
+      // Il faut definir une policy (quelles actions associées à un état)
     }
 
     void dp::init(){
