@@ -94,6 +94,7 @@ namespace cleaner{
       }
       // calcul de G
       for(int i = 0; i<sizeof(ep); i++) {
+        // calcul des différents G
         if(ep[i].st == state1) {
             G1+= ep[i].reward;
         } else if(ep[i].st == state2) {
@@ -101,9 +102,10 @@ namespace cleaner{
         }  else if(ep[i].st == state3) {
             G3 += ep[i].reward;
         }
+       // append G to returns
+       // change policy
+       ep[i].act = greedy(ep[i].st);
       }
-      // append G to returns
-      //policy = greedy(s);
     }
 
     void montecarlo::init(){
