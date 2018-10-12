@@ -28,10 +28,19 @@ namespace cleaner{
     Gnuplot gp;
     std::vector<std::pair<double, double>> points;
 
+    typedef struct {
+      state* st;
+      action act;
+      int reward;
+    } MOVE;
+
     double gamma, epsilon;
     int cepisode = 0, episodes;
     double MIN = -100000, MAX = 100000;
     std::vector<std::tuple<int, int, int>> episode;
+    int cursor = 0;
+    MOVE ep[3];
+    action policy = LEFT;
 
     // backup the position of a pair of state and action in the current episode
     std::unordered_map<int, std::unordered_map<int, int>> pf;
@@ -55,4 +64,5 @@ namespace cleaner{
     action greedy(int);
     double getValueAt(int);
   };
+
 }

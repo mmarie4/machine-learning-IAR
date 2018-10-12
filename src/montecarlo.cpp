@@ -6,10 +6,6 @@ namespace cleaner{
       this->epsilon = epsilon;
       this->gamma = gamma;
       this->episodes = episodes;
-
-
-      // cursor to move in the states
-      int cursor = 0;
     }
 
     montecarlo::~montecarlo(){}
@@ -27,9 +23,6 @@ namespace cleaner{
 
     void montecarlo::solve(){
       this->init();
-
-      // define basic policy
-      action policy = LEFT;
 
       do{
         this->setEpisode();
@@ -68,14 +61,22 @@ namespace cleaner{
 
 
     void montecarlo::setEpisode(){
-      e1 = [w.getState(cursor), policy, reward(w.getState(cursor))];
-      e2 = [w.getState(cursor+1), policy, reward(w.getState(cursor+1))];
-      e3 = [w.getState(cursor+2), policy, reward(w.getState(cursor+2))];
+      ep[0].st = w.getState(cursor);
+      ep[0].act = policy;
+      ep[0].reward = w.reward(w.getState(cursor), policy);
+      ep[1].st = w.getState(cursor+1);
+      ep[1].act = policy;
+      ep[1].reward = w.reward(w.getState(cursor+1), policy);
+      ep[2].st = w.getState(cursor+2);
+      ep[2].act = policy;
+      ep[2].reward = w.reward(w.getState(cursor+2), policy);
       cursor+=3;
     }
 
     void montecarlo::backup(){
-      //TODO complete
+      // calcul de G
+      // append G to returns
+      //policy = greedy(s);
     }
 
     void montecarlo::init(){
