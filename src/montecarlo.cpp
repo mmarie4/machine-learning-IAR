@@ -93,9 +93,9 @@ namespace cleaner{
         state3 = NULL;
       }
       // calcul de G
-      for(int i = 0; i<ep.length; i++) {
+      for(int i = 0; i<sizeof(ep); i++) {
         if(ep[i].st == state1) {
-            G 1+= ep[i].reward;
+            G1+= ep[i].reward;
         } else if(ep[i].st == state2) {
             G2 += ep[i].reward;
         }  else if(ep[i].st == state3) {
