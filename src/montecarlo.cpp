@@ -74,7 +74,34 @@ namespace cleaner{
     }
 
     void montecarlo::backup(){
+      int G1 = 0;
+      int G2 = 0;
+      int G3 = 0;
+      // fin the one, two or three different states in the episode
+      state* state1 = ep[0].st;
+      state* state2;
+      state* state3;
+      if (ep[0].st != ep[1].st) {
+        state2 = ep[1].st;
+        if (ep[0].st != ep[2].st) {
+          state3 = ep[2].st;
+        } else {
+          state3 = NULL;
+        }
+      } else if (ep[0].st != ep[2].st) {
+        state2 = ep[2].st;
+        state3 = NULL;
+      }
       // calcul de G
+      for(int i = 0; i<ep.length; i++) {
+        if(ep[i].st == state1) {
+            G 1+= ep[i].reward;
+        } else if(ep[i].st == state2) {
+            G2 += ep[i].reward;
+        }  else if(ep[i].st == state3) {
+            G3 += ep[i].reward;
+        }
+      }
       // append G to returns
       //policy = greedy(s);
     }
