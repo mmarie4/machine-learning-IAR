@@ -8,7 +8,7 @@ namespace cleaner{
       // processus itératif qui va itérativement appeler backup pour atteindre la bonne valeur de Vf
       // il faut aussi actualiser vf_copy
       // condition d'arret : distance entre vf et l'etape d'après < epsilon
-      int error = 1000;
+      double error = 1;
       init();
       while(error > epsilon) {
         copy();
