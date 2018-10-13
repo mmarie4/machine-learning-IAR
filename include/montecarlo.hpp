@@ -36,10 +36,11 @@ namespace cleaner{
 
     double gamma, epsilon;
     int cepisode = 0, episodes;
+    int episode_size=3;
     double MIN = -100000, MAX = 100000;
     std::vector<std::tuple<int, int, int>> episode;
     int cursor = 0;
-    MOVE ep[3];
+    MOVE ep[episode_size];
     action policy = LEFT;
 
     // backup the position of a pair of state and action in the current episode

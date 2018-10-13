@@ -72,6 +72,21 @@ namespace cleaner{
       ep[2].reward = w.reward(w.getState(cursor+2), policy);
       cursor+=3;
     }
+    /* william
+    backup(){
+    float q0 = 0.0;
+    int returns = 0;
+    while (1) {
+      
+
+  }
+  }
+
+
+
+
+
+    */
 
     void montecarlo::backup(){
       int G1 = 0;

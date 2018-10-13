@@ -21,9 +21,12 @@ namespace cleaner{
       gp.sendBinary1d(points);
       gp.flush();
   }
-
+    //william
     void qlearning::solve(){
       //TODO complete
+      int s = 0;
+      int ss = 1;
+      backup(s,0,ss,0);
     }
 
     double qlearning::getValueAt(int s){
@@ -53,9 +56,20 @@ namespace cleaner{
 
       return agreedy;
     }
-
+    //william
     void qlearning::backup(int s, int a, int ss, double r){
       //TODO complete
+      int d = 1000;
+      int maxQt1 = MIN;
+      while (learning_rate*d > epsilon) {
+        a = greedy(s);
+        r = w.reward(w.getState(s),a);
+        maxQt1 = getValueAt(ss);
+        d = r + maxQt1 - this->qf [s][a];
+        this->qf [s][a] = this->qf[s][a] + learning_rate*d;
+        s++;
+        ss++;
+      }
     }
 
     void qlearning::init(){
