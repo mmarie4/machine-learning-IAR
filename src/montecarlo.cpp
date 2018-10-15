@@ -104,7 +104,7 @@ namespace cleaner{
         }
        // append G to returns
        // change policy
-       ep[i].act = greedy(ep[i].st);
+       ep[i].act = greedy(ep[i].st); // pas bon, c'est la policy qu'il faudra mettre à jour pour chaque état
       }
     }
 
