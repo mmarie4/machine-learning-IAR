@@ -66,6 +66,7 @@ namespace cleaner{
       int state = 0;
       double reward;
       int EPISODE_SIZE = 100;
+      std::tuple<int, int, int> newTuple;
       action a;
 
       // Fill the vector with tuples
@@ -73,7 +74,7 @@ namespace cleaner{
         a = greedy(state);
         w.execute(state, a, newState, reward);
         printf("i=%d - state=%d - newState=%d\n", i, state, newState);
-        std::tuple<int, int, int> newTuple = std::make_tuple(state, static_cast<int>(a), reward);
+        newTuple = std::make_tuple(state, static_cast<int>(a), reward);
         episode.push_back(newTuple);
         state = newState;
         a = greedy(state);

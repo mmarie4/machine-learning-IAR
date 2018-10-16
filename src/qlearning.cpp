@@ -26,7 +26,6 @@ namespace cleaner{
     void qlearning::solve(){
       //TODO complete
       init();
-      double d = 1000;
       int ss = 0;
       int s = 0;
       int a;
@@ -68,14 +67,15 @@ namespace cleaner{
     
     void qlearning::backup(int s, int a, int ss, double r){
       double maxQt1;
-      double d = 1000;
-      a = greedy(s);
-      w.execute(s, action(a), ss, r);
-      printf("ss=%d\n", ss);
-      maxQt1 = getValueAt(ss);
-      d = r + maxQt1 - this->qf[s][a];
-      this->qf [s][a] = this->qf[s][a] + learning_rate*d;
-      //std::cout << "q_solver("<< *w.getState(0) << ") = " << this->getValueAt(0) << std::endl;
+      double d;
+      for(int i = 0; i<100; i++) { // 100 est la taille d'un episode
+        a = greedy(s);
+        w.execute(s, action(a), ss, r);
+        maxQt1 = getValueAt(ss);
+        d = r + maxQt1 - this->qf[s][a];
+        this->qf [s][a] = this->qf[s][a] + learning_rate*d;
+        s = ss;
+      }
     }
 
     void qlearning::init(){
