@@ -70,7 +70,14 @@ namespace cleaner{
 
       // Fill the vector with tuples
       for(int i = 0; i<EPISODE_SIZE; i++) {
-        a = greedy(state);
+        double rd = rand() / ((double) RAND_MAX);
+        // chose action with epsilon-geedy
+        if(rd > epsilon) {
+          a = greedy(state);
+        } else {
+          double rd2 = rand() / ((double) RAND_MAX) * 8;
+          a = action(static_cast<int>(rd2));
+        }
         w.execute(state, a, newState, reward);
         //printf("i=%d - state=%d - newState=%d\n", i, state, newState);
         newTuple = std::make_tuple(state, static_cast<int>(a), reward);
