@@ -147,7 +147,7 @@ namespace cleaner{
     yy = ss->getPose() % max;
     bb = ss->getBattery();
     gg = ss->getGrid();
-    printf("x=%d - y=%d - b=%d - g=%d - xx=%d - yy=%d - bb=%d - gg=%d\n", x, y, b, g, xx, yy, bb, gg);
+    //printf("x=%d - y=%d - b=%d - g=%d - xx=%d - yy=%d - bb=%d - gg=%d\n", x, y, b, g, xx, yy, bb, gg);
 
     switch(a){
       case action::LEFT    :
@@ -256,7 +256,7 @@ namespace cleaner{
   }
 
   void world::execute(int s, action a, int& ss, double& r){
-    printf("action = %d\n", a);
+    //printf("action = %d\n", a);
     double prob = 0, rd = rand() / ((double) RAND_MAX);
     for(int i=0; i<this->getNumStates(); ++i){
       prob += this->probability(this->states[s],a,this->states[i]);

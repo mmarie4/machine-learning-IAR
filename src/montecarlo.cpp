@@ -5,8 +5,7 @@ namespace cleaner{
     montecarlo::montecarlo(world const& w, double epsilon, double gamma, int episodes) : w(w) {
       this->epsilon = epsilon;
       this->gamma = gamma;
-      //this->episodes = episodes;
-      this->episodes=1;
+      this->episodes = episodes;
     }
 
     montecarlo::~montecarlo(){}
@@ -28,7 +27,7 @@ namespace cleaner{
       do{
         this->setEpisode();
         this->backup();
-        this->plots();
+        //this->plots();
       }while( ++this->cepisode < this->episodes );
     }
 
@@ -65,7 +64,7 @@ namespace cleaner{
       int newState = 1;
       int state = 0;
       double reward;
-      int EPISODE_SIZE = 100;
+      int EPISODE_SIZE = 10;
       std::tuple<int, int, int> newTuple;
       action a;
 
@@ -73,12 +72,11 @@ namespace cleaner{
       for(int i = 0; i<EPISODE_SIZE; i++) {
         a = greedy(state);
         w.execute(state, a, newState, reward);
-        printf("i=%d - state=%d - newState=%d\n", i, state, newState);
+        //printf("i=%d - state=%d - newState=%d\n", i, state, newState);
         newTuple = std::make_tuple(state, static_cast<int>(a), reward);
         episode.push_back(newTuple);
         state = newState;
         a = greedy(state);
-        printf("a=%d\n", a);
       }
 
     }      
