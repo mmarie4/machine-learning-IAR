@@ -68,7 +68,7 @@ namespace cleaner{
         w.execute(s, action(a), ss, r);
         maxQt1 = getValueAt(ss);
         d = r + maxQt1 - this->qf[s][a];
-        this->qf [s][a] = this->qf[s][a] + fabs(learning_rate*d);
+        this->qf [s][a] = this->qf[s][a] + learning_rate*fabs(d);
         s = ss;
       }
     }

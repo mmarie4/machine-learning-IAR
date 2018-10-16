@@ -70,25 +70,32 @@ namespace cleaner{
 
       // Fill the vector with tuples
       int EPISODE_SIZE = 100;
+      printf("w.getNumState() = %d\n", w.getNumStates());
       for(int i = 0; i<EPISODE_SIZE; i++) {
+        printf("before execute (i=%d)\n", i);
         w.execute(i, greedy(i), newState, newReward);
+        printf("before creating tuple (i=%d)\n", i);
         std::tuple<int, int, int> newTuple = std::make_tuple(newState, greedy(newState), newReward);
+        printf("tuple created (i=%d)\n", i);
         episode.push_back(newTuple);
-        printf("episode i :", episode.at(i));
+        printf("Tuple added to episode (i=%d)\n", i);
       }
 
     }      
 
-    void montecarlo::backup(){
-      std::vector<double> G;
-      for(int i = 0 ; i < episode.size(); i++) {
+void montecarlo::backup(){
+      for(int i = 0 ; i < episode.size(); i++){
+        std::tuple<int, int, int> curs = episode.at(i);
+        int a = std::get<1>(curs);
+        int s = std::get<0>(curs);
+        if(pf[s][a] == -1){
+          pf[s][a] = 0;                    //first occurence found
+          jf[s][a].first += getReturn(i);   //Sum the rewards from the index of first occurence
+          jf[s][a].second += 1;             //Count the rewards from the first occurence for the mean
+          qf[s][a] = jf[s][a].first / jf[s][a].second;  //Do the mean and update Q value
+        }
       }
-      
-      // calcul de G
-      // a chaque premiere occurence on rajoute l'etat dans le dictionnaire, et quand il y a une recompense on l'ajoute a tous les etats du dictionnaire
-      
-       // append G to returns
-      }
+}
 
     void montecarlo::init(){
       for(int s=0; s<this->w.getNumStates(); ++s){

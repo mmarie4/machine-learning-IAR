@@ -17,10 +17,8 @@ int main(){
   printf("\n\n\n");
   
   cleaner::montecarlo mc_solver(w, 0.1, 0.99, 3000);
-  /*
   mc_solver.solve();
   std::cout << "mc_solver("<< *w.getState(0) << ") = " << mc_solver.getValueAt(0) << std::endl;
-  */
 
   
   cleaner::qlearning q_solver(w, 0.1, 0.1, 0.99, 1000);
