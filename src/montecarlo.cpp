@@ -5,7 +5,8 @@ namespace cleaner{
     montecarlo::montecarlo(world const& w, double epsilon, double gamma, int episodes) : w(w) {
       this->epsilon = epsilon;
       this->gamma = gamma;
-      this->episodes = episodes;
+      //this->episodes = episodes;
+      this->episodes=1;
     }
 
     montecarlo::~montecarlo(){}
@@ -22,7 +23,7 @@ namespace cleaner{
   }
 
     void montecarlo::solve(){
-      this->init();
+      init();
 
       do{
         this->setEpisode();
@@ -65,20 +66,20 @@ namespace cleaner{
       std::tuple<int, int, int> firstTuple = std::make_tuple(0, greedy(0), w.reward(w.getStartState(), greedy(0)));
       episode.push_back(firstTuple);
       
-      int newState;
+      int newState = 1;
+      int state = 0;
       double newReward;
 
       // Fill the vector with tuples
       int EPISODE_SIZE = 100;
       printf("w.getNumState() = %d\n", w.getNumStates());
       for(int i = 0; i<EPISODE_SIZE; i++) {
-        printf("before execute (i=%d)\n", i);
-        w.execute(i, greedy(i), newState, newReward);
-        printf("before creating tuple (i=%d)\n", i);
+        printf("i=%d - state=%d - newState=%d\n", i, state, newState);
+        w.execute(state, greedy(state), newState, newReward);
+        printf("i=%d - state=%d - newState=%d\n", i, state, newState);
         std::tuple<int, int, int> newTuple = std::make_tuple(newState, greedy(newState), newReward);
-        printf("tuple created (i=%d)\n", i);
         episode.push_back(newTuple);
-        printf("Tuple added to episode (i=%d)\n", i);
+        state = newState;
       }
 
     }      

@@ -151,6 +151,7 @@ namespace cleaner{
     switch(a){
       case action::LEFT    :
       x_ = x - 1; y_ = y;
+      printf("x=%d - y=%d - b=%d - g=%d - xx=%d - yy=%d - bb=%d - gg=%d\n", x, y, b, g, xx, yy, bb, gg);
       if( b==0  && ss==s ){
         return 1.0;
       }
