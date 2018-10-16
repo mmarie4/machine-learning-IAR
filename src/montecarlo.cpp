@@ -62,24 +62,22 @@ namespace cleaner{
 
 
     void montecarlo::setEpisode(){
-      // set the first element of the episode
-      std::tuple<int, int, int> firstTuple = std::make_tuple(0, greedy(0), w.reward(w.getStartState(), greedy(0)));
-      episode.push_back(firstTuple);
-      
       int newState = 1;
       int state = 0;
-      double newReward;
+      double reward;
+      int EPISODE_SIZE = 100;
+      action a;
 
       // Fill the vector with tuples
-      int EPISODE_SIZE = 100;
-      printf("w.getNumState() = %d\n", w.getNumStates());
       for(int i = 0; i<EPISODE_SIZE; i++) {
+        a = greedy(state);
+        w.execute(state, a, newState, reward);
         printf("i=%d - state=%d - newState=%d\n", i, state, newState);
-        w.execute(state, greedy(state), newState, newReward);
-        printf("i=%d - state=%d - newState=%d\n", i, state, newState);
-        std::tuple<int, int, int> newTuple = std::make_tuple(newState, greedy(newState), newReward);
+        std::tuple<int, int, int> newTuple = std::make_tuple(state, static_cast<int>(a), reward);
         episode.push_back(newTuple);
         state = newState;
+        a = greedy(state);
+        printf("a=%d\n", a);
       }
 
     }      

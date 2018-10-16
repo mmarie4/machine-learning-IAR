@@ -67,14 +67,15 @@ namespace cleaner{
     }
     
     void qlearning::backup(int s, int a, int ss, double r){
-     double maxQt1;
-     double d = 1000;
+      double maxQt1;
+      double d = 1000;
       a = greedy(s);
-        w.execute(s, action(a), ss, r);
-        maxQt1 = getValueAt(ss);
-        d = r + maxQt1 - this->qf[s][a];
-        this->qf [s][a] = this->qf[s][a] + learning_rate*d;
-        //std::cout << "q_solver("<< *w.getState(0) << ") = " << this->getValueAt(0) << std::endl;
+      w.execute(s, action(a), ss, r);
+      printf("ss=%d\n", ss);
+      maxQt1 = getValueAt(ss);
+      d = r + maxQt1 - this->qf[s][a];
+      this->qf [s][a] = this->qf[s][a] + learning_rate*d;
+      //std::cout << "q_solver("<< *w.getState(0) << ") = " << this->getValueAt(0) << std::endl;
     }
 
     void qlearning::init(){
