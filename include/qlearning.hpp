@@ -36,6 +36,16 @@ namespace cleaner{
     void plots();
     void init();
 
+    // caracteristics for large scale algo
+    int SIZE = 5;
+    double* theta;
+    double* phiResult;
+    void updatePhi(state* s, action a);
+    void updateTheta(int s, int ss, double d);
+    double QF(state* s, action a);
+    double delta;
+
+
   public:
     ~qlearning();
     qlearning(world const&, double, double, double, int);
