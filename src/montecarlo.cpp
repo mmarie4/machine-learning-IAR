@@ -68,6 +68,12 @@ namespace cleaner{
       std::tuple<int, int, int> newTuple;
       action a;
 
+      for(int s=0; s<this->w.getNumStates(); s++) {
+        for (int a=0; a<action::END; a++) {
+          this->pf[s][a] = -1;
+        }
+      }
+
       // Fill the vector with tuples
       for(int i = 0; i<EPISODE_SIZE; i++) {
         double rd = rand() / ((double) RAND_MAX);
