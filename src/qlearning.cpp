@@ -72,8 +72,8 @@ namespace cleaner{
     void qlearning::backup(int s, int a, int ss, double r){
       double maxQt1;
       double d;
-      for(int i = 0; i<10; i++) { // 100 est la taille d'un episode
-        //printf("getValueAt(0) = %f\n", getValueAt(0));
+      for(int i = 0; i<100; i++) { // 100 est la taille d'un episode
+        printf("getValueAt(0) = %f\n", getValueAt(0));
         a = greedy(s);
         w.execute(s, action(a), ss, r);
 
@@ -83,7 +83,7 @@ namespace cleaner{
         updateTheta(s, ss, d, a);
 
         s = ss;
-        displayTab(this->theta, this->SIZE, "phiResult");
+        //displayTab(this->theta, this->SIZE, "Theta\0");
       }
     }
 
@@ -104,20 +104,20 @@ namespace cleaner{
       }
 
       // check caracteristics
-      if(s->getBattery() == 0 && a != CHARGE) {
-        phiResult[0] = -5;
+      if(s->getBattery() == 0 && a != CHARGE && s->getBase()) {
+        phiResult[0] = -1;
       }
-      if(s->getBattery() < 1 && a == CHARGE && s->getBase()) {
-        phiResult[1] = 5;
+      if(s->getBattery() < 2 && a == CHARGE && s->getBase()) {
+        phiResult[1] = 0.5;
       }
       if(s->getGrid().at(s->getPose()) == false && a != CLEAN) {
-        phiResult[2] = -5;
+        phiResult[2] = -0.5;
       }
       if(s->getGrid().at(s->getPose()) == true && a != LEFT && a != RIGHT && a != DOWN && a != UP) {
-        phiResult[3] = -5;
+        phiResult[3] = -0.5;
       }
       if(a == WAIT) {
-        phiResult[4] = -1;
+        phiResult[4] = -0.3;
       }
     }
 
@@ -143,7 +143,6 @@ namespace cleaner{
         printf(" %f ", tab[i]);
       }
       printf("\n");
-      exit(0);
     }
     
 }

@@ -2,32 +2,24 @@
 
 
 namespace cleaner{
-    montecarlo::montecarlo(world const& w, double epsilon, double gamma, int episodes) : w(w) {
-      this->epsilon = epsilon;
-      this->gamma = gamma;
-      this->episodes = episodes;
+    montecarlo::montecarlo(world const& w, double epsilon, double gamma, int episodes) : w(w), epsilon(epsilon), gamma(gamma), episodes(episodes){
     }
 
-    montecarlo::~montecarlo(){}
+    montecarlo::~montecarlo(){
+    }
 
     void montecarlo::plots(){
       std::cout << this->getValueAt(0) << std::endl;
-      points.push_back(std::make_pair(this->cepisode, this->getValueAt(0)));
-
-      gp << "set xlabel 'Episodes'\n";
-      gp << "set ylabel 'Mean Value'\n";
-      gp << "plot '-' binary" << gp.binFmt1d(points, "record") << "with lines title 'Monte Carlo'\n";
-      gp.sendBinary1d(points);
-      gp.flush();
   }
 
     void montecarlo::solve(){
-      init();
+      this->init();
 
       do{
         this->setEpisode();
         this->backup();
-        //this->plots();
+
+        this->plots();
       }while( ++this->cepisode < this->episodes );
     }
 
@@ -38,7 +30,6 @@ namespace cleaner{
       } return value;
     }
 
-    //<! prescribes the greedy action
     action montecarlo::greedy(int s){
       action agreedy;
       double value = MIN;
@@ -61,52 +52,54 @@ namespace cleaner{
 
 
     void montecarlo::setEpisode(){
-      int newState = 1;
-      int state = 0;
-      double reward;
-      int EPISODE_SIZE = 10;
-      std::tuple<int, int, int> newTuple;
       action a;
+      double r;
+      this->episode.clear();
+      int s, ss;
 
-      for(int s=0; s<this->w.getNumStates(); s++) {
-        for (int a=0; a<action::END; a++) {
+      for(s=0; s<this->w.getNumStates(); ++s){
+        for(int a=0; a<action::END; ++a){
           this->pf[s][a] = -1;
         }
       }
 
-      // Fill the vector with tuples
-      for(int i = 0; i<EPISODE_SIZE; i++) {
-        double rd = rand() / ((double) RAND_MAX);
-        // chose action with epsilon-geedy
-        if(rd > epsilon) {
-          a = greedy(state);
-        } else {
-          double rd2 = rand() / ((double) RAND_MAX) * 8;
-          a = action(static_cast<int>(rd2));
+      s = 0;
+      double rd = rand() / ((double) RAND_MAX);
+      for(int i=0; i<100; i++){
+        if( rd > this->epsilon ) {
+          a = greedy(s);
+        }else {
+          a = static_cast<action>(rand() % 7);
         }
-        w.execute(state, a, newState, reward);
-        //printf("i=%d - state=%d - newState=%d\n", i, state, newState);
-        newTuple = std::make_tuple(state, static_cast<int>(a), reward);
-        episode.push_back(newTuple);
-        state = newState;
-        a = greedy(state);
+
+        w.execute(s, a, ss, r);
+
+        this->episode.push_back(std::make_tuple(s, a, r));
+
+        if(this->pf[s][a] == -1){
+          this->pf[s][a] = i;
+        }
+
+        s = ss;
       }
+    }
 
-    }      
+    void montecarlo::backup(){
+      int s, a;
+      double old, cumul;
 
-void montecarlo::backup(){
-      for(int i = 0 ; i < episode.size(); i++){
-        std::tuple<int, int, int> curs = episode.at(i);
-        int a = std::get<1>(curs);
-        int s = std::get<0>(curs);
-        if(pf[s][a] == -1){
-          pf[s][a] = 0;                    //first occurence found
-          jf[s][a].first += getReturn(i);   //Sum the rewards from the index of first occurence
-          jf[s][a].second += 1;             //Count the rewards from the first occurence for the mean
-          qf[s][a] = jf[s][a].first / jf[s][a].second;  //Do the mean and update Q value
+      for(s=0; s<this->w.getNumStates(); ++s){
+        for(a=0; a<action::END; ++a){
+          if( this->pf[s][a] > -1 ){
+            old = QF(w.getState(s), action(a));
+            cumul = this->getReturn(this->pf[s][a]);
+            this->jf[s][a].second ++;
+            this->jf[s][a].first += cumul;
+            this->qf[s][a] = this->jf[s][a].first / this->jf[s][a].second;
+          }
         }
       }
-}
+    }
 
     void montecarlo::init(){
       for(int s=0; s<this->w.getNumStates(); ++s){
@@ -119,6 +112,55 @@ void montecarlo::backup(){
           this->jf.at(s).emplace(a, std::pair<double, int>(0.0, 0));
         }
       }
+    }
+
+        // Update phiResult depending on the current state and action
+    void montecarlo::updatePhi(state* s, action a) {
+      // Empty phi
+      for(int i = 0; i<this->SIZE; i++) {
+        phiResult[i] = 0;
+      }
+
+      // check caracteristics
+      if(s->getBattery() == 0 && a != CHARGE && s->getBase()) {
+        phiResult[0] = -1;
+      }
+      if(s->getBattery() < 2 && a == CHARGE && s->getBase()) {
+        phiResult[1] = 0.5;
+      }
+      if(s->getGrid().at(s->getPose()) == false && a != CLEAN) {
+        phiResult[2] = -0.5;
+      }
+      if(s->getGrid().at(s->getPose()) == true && a != LEFT && a != RIGHT && a != DOWN && a != UP) {
+        phiResult[3] = -0.5;
+      }
+      if(a == WAIT) {
+        phiResult[4] = -0.3;
+      }
+    }
+
+
+    void montecarlo::updateTheta(int s, int ss, double d, int a) {
+        for (int i = 0; i<this->SIZE; i++) {
+          theta[i] = theta[i] + learning_rate * d * phiResult[i];
+        }
+    }
+
+    double montecarlo::QF(state* s, action a) {
+      updatePhi(s, action(a)); // calculate phi(s, a) and put the result in phiResult
+      double scal = 0;
+      for(int i = 0; i<this->SIZE; i++) {
+        scal += this->theta[i] * this->phiResult[i];
+      }
+    }
+
+    // display tab for debug theta or phiResult
+    void montecarlo::displayTab(double *tab, int size, char* name) {
+      printf("%s : ");
+      for(int i = 0; i<size; i++) {
+        printf(" %f ", tab[i]);
+      }
+      printf("\n");
     }
 
 }
