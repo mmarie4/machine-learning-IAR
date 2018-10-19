@@ -39,10 +39,6 @@ namespace cleaner{
         backup(s,a,ss,r);
         s = ss;
       }
-
-      printf("----- test phi ----- \n");
-      updatePhi(w.getState(0), action(4));
-      printf("First three elements of phi result : %f, - %f - %f\n", phiResult[0], phiResult[1], phiResult[2]);
     }
 
     double qlearning::getValueAt(int s){
@@ -76,17 +72,18 @@ namespace cleaner{
     void qlearning::backup(int s, int a, int ss, double r){
       double maxQt1;
       double d;
-      for(int i = 0; i<100; i++) { // 100 est la taille d'un episode
+      for(int i = 0; i<10; i++) { // 100 est la taille d'un episode
+        //printf("getValueAt(0) = %f\n", getValueAt(0));
         a = greedy(s);
         w.execute(s, action(a), ss, r);
 
         maxQt1 = getValueAt(ss);
         d = r + maxQt1 - QF(w.getState(s), action(a));
         
-        updatePhi(w.getState(s), action(a));
-        updateTheta(s, ss, d);
+        updateTheta(s, ss, d, a);
 
         s = ss;
+        displayTab(this->theta, this->SIZE, "phiResult");
       }
     }
 
@@ -105,11 +102,12 @@ namespace cleaner{
       for(int i = 0; i<this->SIZE; i++) {
         phiResult[i] = 0;
       }
+
       // check caracteristics
       if(s->getBattery() == 0 && a != CHARGE) {
         phiResult[0] = -5;
       }
-      if(s->getBattery() < 100 && a == CHARGE && s->getBase()) {
+      if(s->getBattery() < 1 && a == CHARGE && s->getBase()) {
         phiResult[1] = 5;
       }
       if(s->getGrid().at(s->getPose()) == false && a != CLEAN) {
@@ -124,19 +122,28 @@ namespace cleaner{
     }
 
 
-    void qlearning::updateTheta(int s, int ss, double d) {
-        // theta = theta + learning_rate * d + gradient(theta) * QF(s, a)
+    void qlearning::updateTheta(int s, int ss, double d, int a) {
         for (int i = 0; i<this->SIZE; i++) {
-          //
+          theta[i] = theta[i] + learning_rate * d * phiResult[i];
         }
     }
 
     double qlearning::QF(state* s, action a) {
+      updatePhi(s, action(a)); // calculate phi(s, a) and put the result in phiResult
       double scal = 0;
       for(int i = 0; i<this->SIZE; i++) {
         scal += this->theta[i] * this->phiResult[i];
       }
     }
 
+    // display tab for debug theta or phiResult
+    void qlearning::displayTab(double *tab, int size, char* name) {
+      printf("%s : ");
+      for(int i = 0; i<size; i++) {
+        printf(" %f ", tab[i]);
+      }
+      printf("\n");
+      exit(0);
+    }
     
 }

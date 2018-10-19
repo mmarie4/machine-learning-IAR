@@ -7,8 +7,9 @@
 
 int main(){
   srand (time(NULL));
-  cleaner::world w(1,2,3);
+  //cleaner::world w(1,2,3);
   //cleaner::world w(1000, 1000, 1000);
+  cleaner::world w(2, 3, 3);
   std::cout << w << std::endl;
 /*
   printf("\n------ Dynamic programming -------\n");

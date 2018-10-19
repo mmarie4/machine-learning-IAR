@@ -41,7 +41,8 @@ namespace cleaner{
     double* theta;
     double* phiResult;
     void updatePhi(state* s, action a);
-    void updateTheta(int s, int ss, double d);
+    void updateTheta(int s, int ss, double d, int a);
+    void displayTab(double *theta, int size, char* name);
     double QF(state* s, action a);
     double delta;
 
