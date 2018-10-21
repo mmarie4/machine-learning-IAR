@@ -67,10 +67,10 @@ namespace cleaner{
       int getNumStates() const;
 
       // returns the state associated with the index
-      state* getState(int) const;
+      state*const getState(int) const;
 
       // returns the initial state
-      state* getStartState() const;
+      state*const getStartState() const;
 
       // returns the reward for a pair of state and action
       double reward(state* const, action) const;

@@ -48,9 +48,8 @@ namespace cleaner{
       * This method should produce an output of this form:
       */
       friend std::ostream& operator<<(std::ostream& os, state const& s){
-        unsigned long i;
         os  << std::to_string(s.pose) << std::to_string(s.base) << std::to_string(s.battery);
-        for(i=0; i<s.grid.size(); ++i) os << std::to_string(s.grid[i]);
+        for(int i=0; i<s.grid.size(); ++i) os << std::to_string(s.grid[i]);
         return os;
       }
   };

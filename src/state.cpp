@@ -1,11 +1,7 @@
 #include "../include/state.hpp"
 
 namespace cleaner{
-  state::state(std::vector<bool>const grid, bool base, size battery, size pose): grid(grid){
-    this->base = base;
-    this->battery = battery;
-    this->pose = pose;
-  }
+  state::state(std::vector<bool>const grid, bool base, size battery, size pose): grid(grid), base(base), battery(battery), pose(pose){}
 
   state::~state(){}
 

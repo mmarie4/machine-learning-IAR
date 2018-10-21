@@ -1,7 +1,7 @@
 #include "../include/world.hpp"
 
 namespace cleaner{
-  state* world::getStartState() const{
+  state*const world::getStartState() const{
     return this->states[0];
   }
 
@@ -9,7 +9,7 @@ namespace cleaner{
     return this->states.size();
   }
 
-  state* world::getState(int i) const{
+  state*const world::getState(int i) const{
     return this->getNumStates() > i ? this->states[ i ] : NULL;
   }
 
@@ -53,7 +53,6 @@ namespace cleaner{
     return grid;
   }
 
-  //<! returns 
   std::vector<bool> world::next(size n){
     this->current = this->cend;
 
@@ -90,14 +89,14 @@ namespace cleaner{
   }
 
   world::~world(){
-    // for (std::vector< state* >::iterator it = this->states.begin() ; it != this->states.end(); ++it){
-    //  delete (*it);
-    // } this->states.clear();
+    for (std::vector< state* >::iterator it = this->states.begin() ; it != this->states.end(); ++it){
+     delete (*it);
+    } this->states.clear();
 
-    // if( cbegin != NULL ){
-    //   delete[] cbegin;
-    //   cbegin = NULL;
-    // }
+    if( cbegin != NULL ){
+      delete[] cbegin;
+      cbegin = NULL;
+    }
   }
 
   double world::reward(state* const s, action a)  const{
@@ -125,11 +124,7 @@ namespace cleaner{
 
   bool world::compare(std::vector<bool>const& v1, std::vector<bool>const& v2, int pose) const{
     bool ok = true;
-
-    unsigned long i;
-    for(i=0; i<v1.size() && ok; ++i)
-      if(pose != (int)i) ok &= v1[i] == v2[i];
-
+    for(int i=0; i<v1.size() && ok; ++i) if(pose != i) ok &= v1[i] == v2[i];
     return ok;
   }
 
@@ -147,7 +142,6 @@ namespace cleaner{
     yy = ss->getPose() % max;
     bb = ss->getBattery();
     gg = ss->getGrid();
-    //printf("x=%d - y=%d - b=%d - g=%d - xx=%d - yy=%d - bb=%d - gg=%d\n", x, y, b, g, xx, yy, bb, gg);
 
     switch(a){
       case action::LEFT    :
@@ -256,7 +250,6 @@ namespace cleaner{
   }
 
   void world::execute(int s, action a, int& ss, double& r){
-    //printf("action = %d\n", a);
     double prob = 0, rd = rand() / ((double) RAND_MAX);
     for(int i=0; i<this->getNumStates(); ++i){
       prob += this->probability(this->states[s],a,this->states[i]);

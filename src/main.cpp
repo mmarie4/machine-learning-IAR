@@ -5,11 +5,21 @@
 #include "../include/qlearning.hpp"
 #include "../include/montecarlo.hpp"
 
-int main(){
+int main(int argc, char** argv){
+  int wi, he, ba;
+
+  if(argc == 4 ) {
+    wi = atoi(argv[1]);
+    he = atoi(argv[2]);
+    ba = atoi(argv[3]);
+  } else {
+    wi = 10;
+    he = 10;
+    ba = 5;
+  }
+
   srand (time(NULL));
-  //cleaner::world w(1,2,3);
-  //cleaner::world w(1000, 1000, 1000);
-  cleaner::world w(2, 3, 5);
+  cleaner::world w(wi, he, ba);
   std::cout << w << std::endl;
 /*
   printf("\n------ Dynamic programming -------\n");
@@ -18,18 +28,19 @@ int main(){
   std::cout << "dp_solver("<< *w.getState(0) << ") = " << dp_solver.getValueAt(0) << std::endl;
   */
 
+  /*
   printf("\n------ Monte Carlo -------\n");
   cleaner::montecarlo mc_solver(w, 0.1, 0.99, 3000);
   mc_solver.solve();
   std::cout << "mc_solver("<< *w.getState(0) << ") = " << mc_solver.getValueAt(0) << std::endl;
+  */
 
-/*
+
   printf("\n------ Q-Learning -------\n");
   cleaner::qlearning q_solver(w, 0.1, 0.1, 0.99, 1000);
   q_solver.solve();
   std::cout << "q_solver("<< *w.getState(0) << ") = " << q_solver.getValueAt(0) << std::endl;
-  */
-
+  
  
   return 0;
 }

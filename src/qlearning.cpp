@@ -124,7 +124,7 @@ namespace cleaner{
 
     void qlearning::updateTheta(int s, int ss, double d, int a) {
         for (int i = 0; i<this->SIZE; i++) {
-          theta[i] = theta[i] + learning_rate * d * phiResult[i];
+          theta[i] = theta[i] + this->learning_rate * d * phiResult[i];
         }
     }
 
