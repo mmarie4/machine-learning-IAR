@@ -37,7 +37,6 @@ namespace cleaner{
       double r;
 
       for (int i = 0; i < episodes; i++){
-        printf("episode en cours : %d\n",i);
         backup(s,a,ss,r);
         s = ss;
 
@@ -75,8 +74,9 @@ namespace cleaner{
     void qlearning::backup(int s, int a, int ss, double r){
       double maxQt1;
       double d;
-      for(int i = 0; i<50; i++) { // 100 est la taille d'un episode
-        //printf("getValueAt(0) = %f\n", getValueAt(0));
+      int size_episode = 100;
+      for(int i = 0; i<size_episode; i++) {
+        printf("getValueAt(0) = %f\n", getValueAt(0));
         a = greedy(s);
         w.execute(s, action(a), ss, r);
 
@@ -84,7 +84,7 @@ namespace cleaner{
         //printf("maxQt1 = %f\n", maxQt1);
         d = r + maxQt1 - QF(w.getState(s), action(a));
 
-        updateTheta(s, ss, d, a);
+        updateTheta(s, d, a);
 
         s = ss;
         //printf("i = %d\n",i);
@@ -121,22 +121,20 @@ namespace cleaner{
       if(w.dirty_cells_2_entries[s->getPose()]<0 && a != LEFT && a != RIGHT && a != DOWN && a != UP) {
         phiResult[3] = -0.5;
       }
-      //phiResult[2]=0;
-      //phiResult[3]=0;
       if(a == WAIT) {
         phiResult[4] = -0.3;
       }
     }
 
 
-    void qlearning::updateTheta(int s, int ss, double d, int a) {
+    void qlearning::updateTheta(int s, double d, int a) {
         for (int i = 0; i<this->SIZE; i++) {
           theta[i] = theta[i] + this->learning_rate * d * phiResult[i];
         }
     }
 
     double qlearning::QF(state* s, action a) {
-      updatePhi(s, action(a)); // calculate phi(s, a) and put the result in phiResult
+      updatePhi(s, a); // calculate phi(s, a) and put the result in phiResult
       double scal = 0;
       for(int i = 0; i<this->SIZE; i++) {
         scal += this->theta[i] * this->phiResult[i];

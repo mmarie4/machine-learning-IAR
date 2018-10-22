@@ -2,14 +2,14 @@
 
 
 namespace cleaner{
-    montecarlo::montecarlo(world const& w, double epsilon, double gamma, int episodes) : w(w), epsilon(epsilon), gamma(gamma), episodes(episodes){
+    montecarlo::montecarlo(world const& w, double epsilon, double gamma, double learning_rate, int episodes) : w(w), epsilon(epsilon), gamma(gamma), learning_rate(learning_rate), episodes(episodes){
     }
 
     montecarlo::~montecarlo(){
     }
 
     void montecarlo::plots(){
-      std::cout << this->getValueAt(0) << std::endl;
+      //printf("getValueAt(0) = %f\n", getValueAt(0));
   }
 
     void montecarlo::solve(){
@@ -26,7 +26,7 @@ namespace cleaner{
     double montecarlo::getValueAt(int s){
       double value = MIN;
       for(int a=0; a<action::END; ++a){
-        value = std::max(value, this->qf[s][a]);
+        value = std::max(value, QF(w.getState(s), action(a)));
       } return value;
     }
 
@@ -87,17 +87,26 @@ namespace cleaner{
     void montecarlo::backup(){
       int s, a;
       double old, cumul;
+      double d;
 
       for(s=0; s<this->w.getNumStates(); ++s){
+        if(w.dirty_cells_2_entries[s] != 0) {
+          printf("w.dirty_cells_2_entries[s] = %d pour s = %d and size of dirty_cells = %d\n", w.dirty_cells_2_entries[s], s, w.dirty_cells_2_entries.size());
+        }
         for(a=0; a<action::END; ++a){
           if( this->pf[s][a] > -1 ){
             old = QF(w.getState(s), action(a));
             cumul = this->getReturn(this->pf[s][a]);
             this->jf[s][a].second ++;
             this->jf[s][a].first += cumul;
+
+            if(action(a) != LEFT && action(a) != RIGHT && action(a) != UP && action(a) != DOWN) {
+              //printf("============================================================================================> NOT MOVING\n");
+            }
             
             // mettre a jour theta
-
+            d = cumul - old;
+            updateTheta(s, d, a);
           }
         }
       }
@@ -116,7 +125,7 @@ namespace cleaner{
       }
     }
 
-        // Update phiResult depending on the current state and action
+    // Update phiResult depending on the current state and action
     void montecarlo::updatePhi(state* s, action a) {
       // Empty phi
       for(int i = 0; i<this->SIZE; i++) {
@@ -130,10 +139,10 @@ namespace cleaner{
       if(s->getBattery() < 2 && a == CHARGE && s->getBase()) {
         phiResult[1] = 0.5;
       }
-      if(s->getGrid().at(s->getPose()) == false && a != CLEAN) {
+      if(w.dirty_cells_2_entries[s->getPose()]>=0 && a != CLEAN) {
         phiResult[2] = -0.5;
       }
-      if(s->getGrid().at(s->getPose()) == true && a != LEFT && a != RIGHT && a != DOWN && a != UP) {
+      if(w.dirty_cells_2_entries[s->getPose()]<0 && a != LEFT && a != RIGHT && a != DOWN && a != UP) {
         phiResult[3] = -0.5;
       }
       if(a == WAIT) {
@@ -142,27 +151,28 @@ namespace cleaner{
     }
 
 
-    void montecarlo::updateTheta(int s, int ss, double d, int a) {
+    void montecarlo::updateTheta(int s, double d, int a) {
         for (int i = 0; i<this->SIZE; i++) {
-          //theta[i] = theta[i] + this->learning_rate * d * phiResult[i];
+          theta[i] = theta[i] + this->learning_rate * d * phiResult[i];
         }
     }
 
     double montecarlo::QF(state* s, action a) {
-      updatePhi(s, action(a)); // calculate phi(s, a) and put the result in phiResult
+      updatePhi(s, a); // calculate phi(s, a) and put the result in phiResult
       double scal = 0;
       for(int i = 0; i<this->SIZE; i++) {
         scal += this->theta[i] * this->phiResult[i];
       }
+      return scal;
     }
 
     // display tab for debug theta or phiResult
-    void montecarlo::displayTab(double *tab, int size, char* name) {
-      printf("%s : ");
+    void montecarlo::displayTab(double *tab, int size, char name[]) {
       for(int i = 0; i<size; i++) {
         printf(" %f ", tab[i]);
       }
       printf("\n");
     }
+
 
 }

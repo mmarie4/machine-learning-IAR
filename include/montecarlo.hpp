@@ -49,18 +49,20 @@ namespace cleaner{
     void plots();
     void init();
 
-       // caracteristics for large scale algo
+    double learning_rate;
+
+    // caracteristics for large scale algo
     int SIZE = 5;
     double* theta;
     double* phiResult;
     void updatePhi(state* s, action a);
-    void updateTheta(int s, int ss, double d, int a);
-    void displayTab(double *theta, int size, char* name);
+    void updateTheta(int s, double d, int a);
+    void displayTab(double *theta, int size, char name[]);
     double QF(state* s, action a);
 
   public:
     ~montecarlo();
-    montecarlo(world const&, double, double, int);
+    montecarlo(world const&, double, double, double, int);
     void solve();
     action greedy(int);
     double getValueAt(int);
