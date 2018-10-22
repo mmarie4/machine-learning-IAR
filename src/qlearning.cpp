@@ -134,6 +134,7 @@ namespace cleaner{
       for(int i = 0; i<this->SIZE; i++) {
         scal += this->theta[i] * this->phiResult[i];
       }
+      return scal;
     }
 
     // display tab for debug theta or phiResult
