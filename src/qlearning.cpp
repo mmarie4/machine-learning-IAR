@@ -3,7 +3,8 @@
 
 
 namespace cleaner{
-    qlearning::qlearning(world const& w, double epsilon, double learning_rate, double gamma, int episodes) : w(w){
+    qlearning::qlearning(world const& w, double epsilon, double learning_rate, double gamma, int episodes): w(w){
+      this->w=w;
       this->epsilon = epsilon;
       this->learning_rate = learning_rate;
       this->gamma = gamma;
@@ -26,7 +27,7 @@ namespace cleaner{
       gp.sendBinary1d(points);
       gp.flush();
   }
-    
+
     void qlearning::solve(){
       //TODO complete
       init();
@@ -38,6 +39,7 @@ namespace cleaner{
       for (int i = 0; i < episodes; i++){
         backup(s,a,ss,r);
         s = ss;
+        //printf("episode en cours : %d\n",i);
       }
     }
 
@@ -68,7 +70,7 @@ namespace cleaner{
 
       return agreedy;
     }
-    
+
     void qlearning::backup(int s, int a, int ss, double r){
       double maxQt1;
       double d;
@@ -78,11 +80,13 @@ namespace cleaner{
         w.execute(s, action(a), ss, r);
 
         maxQt1 = getValueAt(ss);
+        //printf("maxQt1 = %f\n", maxQt1);
         d = r + maxQt1 - QF(w.getState(s), action(a));
-        
+
         updateTheta(s, ss, d, a);
 
         s = ss;
+        //printf("i = %d\n",i);
         //displayTab(this->theta, this->SIZE, "Theta\0");
       }
     }
@@ -110,12 +114,14 @@ namespace cleaner{
       if(s->getBattery() < 2 && a == CHARGE && s->getBase()) {
         phiResult[1] = 0.5;
       }
-      if(s->getGrid().at(s->getPose()) == false && a != CLEAN) {
+      if((s->getGrid()).at(s->getPose()) == false && a != CLEAN) {
         phiResult[2] = -0.5;
-      }
+      }/*
       if(s->getGrid().at(s->getPose()) == true && a != LEFT && a != RIGHT && a != DOWN && a != UP) {
         phiResult[3] = -0.5;
-      }
+      }*/
+      //phiResult[2]=0;
+      phiResult[3]=0;
       if(a == WAIT) {
         phiResult[4] = -0.3;
       }
@@ -145,5 +151,5 @@ namespace cleaner{
       }
       printf("\n");
     }
-    
+
 }
