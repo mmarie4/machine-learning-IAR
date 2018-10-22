@@ -37,7 +37,7 @@ namespace cleaner{
     std::vector<state*> states;
     size width, height, cbattery;
     bool *cbegin, *cend, *current;
-    std::unordered_map<size, size> dirty_cells_2_entries;
+    //std::unordered_map<size, size> dirty_cells_2_entries;
 
     void populate();
     bool sound(double) const;
@@ -57,7 +57,7 @@ namespace cleaner{
       std::vector<state*>const& getStates() const;
       double probability(state* const, action, state* const)  const;
       void execute(int, action, int&, double&);
-
+      std::unordered_map<size, size> dirty_cells_2_entries; // sensé etre protected
       /*!
       * \fn std::ostream& operator<<(std::ostream&, const world&)
       * \brief print the world

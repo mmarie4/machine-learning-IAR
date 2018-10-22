@@ -39,11 +39,11 @@ int main(int argc, char** argv){
 
 
   printf("\n------ Q-Learning -------\n");
-  cleaner::qlearning q_solver(w, 0.1, 0.1, 0.99, 1000);
+  cleaner::qlearning q_solver(w, 0.1, 0.1, 0.99, 10); //(w, 0.1, 0.1, 0.99, 1000) : default
   q_solver.solve();
 
   std::cout << "q_solver("<< *w.getState(0) << ") = " << q_solver.getValueAt(0) << std::endl;
-  
+
 
   return 0;
 }

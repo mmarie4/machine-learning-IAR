@@ -39,7 +39,7 @@ namespace cleaner{
       for (int i = 0; i < episodes; i++){
         backup(s,a,ss,r);
         s = ss;
-        //printf("episode en cours : %d\n",i);
+        printf("episode en cours : %d\n",i);
       }
     }
 
@@ -114,14 +114,14 @@ namespace cleaner{
       if(s->getBattery() < 2 && a == CHARGE && s->getBase()) {
         phiResult[1] = 0.5;
       }
-      if((s->getGrid()).at(s->getPose()) == false && a != CLEAN) {
+      if(w.dirty_cells_2_entries[s->getPose()]>=0 && a != CLEAN) {
         phiResult[2] = -0.5;
-      }/*
-      if(s->getGrid().at(s->getPose()) == true && a != LEFT && a != RIGHT && a != DOWN && a != UP) {
+      }
+      if(w.dirty_cells_2_entries[s->getPose()]<0 && a != LEFT && a != RIGHT && a != DOWN && a != UP) {
         phiResult[3] = -0.5;
-      }*/
+      }
       //phiResult[2]=0;
-      phiResult[3]=0;
+      //phiResult[3]=0;
       if(a == WAIT) {
         phiResult[4] = -0.3;
       }
