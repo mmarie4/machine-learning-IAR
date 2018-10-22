@@ -10,6 +10,7 @@
 #include <algorithm>
 #include <memory>
 #include <cmath>
+#include <unordered_map>
 
 #include "types.hpp"
 #include "state.hpp"
@@ -32,56 +33,29 @@ namespace cleaner{
   class world{
   protected:
     double proba = 0.1;
-
-    // width + height of the grid
-    size width, height;
-
-    // battery levels
-    size cbattery;
-
-    // set of all states
+    size num_dirty_cells;
     std::vector<state*> states;
-
-    // iterators
+    size width, height, cbattery;
     bool *cbegin, *cend, *current;
+    std::unordered_map<size, size> dirty_cells_2_entries;
 
-    // generate the set of states
     void populate();
-
-    // generate variations
+    bool sound(double) const;
     std::vector<bool> init(size);
     std::vector<bool> next(size);
-
-    // comparator
+    bool getGrid(std::vector<bool>const&, size) const;
     bool compare(std::vector<bool>const&, std::vector<bool>const&) const;
     bool compare(std::vector<bool>const&, std::vector<bool>const&, int) const;
 
-    // check whether or not the model is sound
-    bool sound(double) const;
-
   public:
       ~world();
-      world(size, size, size);
-
-      // returns the number of states
+      world(size, size, size, size);
       int getNumStates() const;
-
-      // returns the state associated with the index
-      state*const getState(int) const;
-
-      // returns the initial state
-      state*const getStartState() const;
-
-      // returns the reward for a pair of state and action
+      state* getState(int) const;
+      state* getStartState() const;
       double reward(state* const, action) const;
-
-      // returns the set of all states
       std::vector<state*>const& getStates() const;
-
-      // returns the probability of a triplet
       double probability(state* const, action, state* const)  const;
-
-      // returns the tuple next state and reward given current state and action
       void execute(int, action, int&, double&);
 
       /*!
@@ -97,10 +71,11 @@ namespace cleaner{
         os << "\033[1m\033[32m ######################## <world> \033[0m" <<  std::endl;
         os << "\033[1m\033[32m ######################## \t<preamble> \033[0m" << std::endl;
         os << "\033[1m\033[32m ######################## \t\t<states>" << model.states.size() << "</states> \033[0m" << std::endl;
-        os << "\033[1m\033[32m ######################## \t\t<sound> " << model.sound(0.001) << "</sound> \033[0m" << std::endl;
+        os << "\033[1m\033[32m ######################## \t\t<sound> unchecked </sound> \033[0m" << std::endl;
+        // os << "\033[1m\033[32m ######################## \t\t<sound> " << model.sound(0.001) << "</sound> \033[0m" << std::endl;
         os << "\033[1m\033[32m ######################## \t\t<actions> " << action::END - action::LEFT << "</actions> \033[0m" << std::endl;
         os << "\033[1m\033[32m ######################## \t</preamble> \033[0m" << std::endl;
-        os << "\033[1m\033[32m ######################## \t<param> \033[0m" << std::endl;
+        // os << "\033[1m\033[32m ######################## \t<param> \033[0m" << std::endl;
 
         // int a; double prob;
         // os << "\033[1m\033[32m ######################## \t\t<reward> \033[0m" << std::endl;
@@ -116,7 +91,7 @@ namespace cleaner{
         // } os << "\033[1m\033[32m ######################## \t\t</dynamics> \033[0m" << std::endl;
         //
         // os << "\033[1m\033[32m ######################## \t</param> \033[0m" << std::endl;
-        // os << "\033[1m\033[32m ######################## </world> \033[0m" << std::endl;
+        os << "\033[1m\033[32m ######################## </world> \033[0m" << std::endl;
 
         return os;
       }

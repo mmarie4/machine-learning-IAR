@@ -6,20 +6,22 @@
 #include "../include/montecarlo.hpp"
 
 int main(int argc, char** argv){
-  int wi, he, ba;
+  int wi, he, ba, dc;
 
-  if(argc == 4 ) {
+  if(argc == 5 ) {
     wi = atoi(argv[1]);
     he = atoi(argv[2]);
     ba = atoi(argv[3]);
+    dc = atoi(argv[4]);
   } else {
     wi = 10;
     he = 10;
-    ba = 5;
+    ba = 3;
+    dc = 3;
   }
 
   srand (time(NULL));
-  cleaner::world w(wi, he, ba);
+  cleaner::world w(wi, he, ba, dc);
   std::cout << w << std::endl;
 /*
   printf("\n------ Dynamic programming -------\n");

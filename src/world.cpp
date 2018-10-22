@@ -1,7 +1,22 @@
 #include "../include/world.hpp"
 
 namespace cleaner{
-  state*const world::getStartState() const{
+  world::world(size width, size height, size cbattery, size num_dirty_cells) : num_dirty_cells(num_dirty_cells), width(width), height(height), cbattery(cbattery){
+    this->populate();
+  }
+
+  world::~world(){
+    for (std::vector< state* >::iterator it = this->states.begin() ; it != this->states.end(); ++it){
+     delete (*it);
+    } this->states.clear();
+
+    if( cbegin != NULL ){
+      delete[] cbegin;
+      cbegin = NULL;
+    }
+  }
+
+  state* world::getStartState() const{
     return this->states[0];
   }
 
@@ -9,7 +24,7 @@ namespace cleaner{
     return this->states.size();
   }
 
-  state*const world::getState(int i) const{
+  state* world::getState(int i) const{
     return this->getNumStates() > i ? this->states[ i ] : NULL;
   }
 
@@ -31,15 +46,21 @@ namespace cleaner{
   }
 
   void world::populate(){
-    std::vector<bool> grid = this->init(width * height);
+    int cell, battery, pose, base = 0;
 
-    int battery, pose, base = 0;
+    for(size i=0; i<this->num_dirty_cells; ++i){
+      cell = rand() % (width*height);
+      this->dirty_cells_2_entries.emplace(cell, i);
+    }
+
+    std::vector<bool> grid = this->init(this->num_dirty_cells);
+
     do{
       for( pose=0; pose<width*height; ++pose )
         for( battery=0; battery<cbattery; ++battery ){
           states.push_back( new state(grid, base==pose, battery, pose) );
         }
-    } while( (grid = this->next(width * height)).size() != 0 );
+    } while( (grid = this->next(this->num_dirty_cells)).size() != 0 );
   }
 
   std::vector<bool> world::init(size n){
@@ -84,28 +105,17 @@ namespace cleaner{
     return grid;
   }
 
-  world::world(size width, size height, size cbattery) : width(width), height(height), cbattery(cbattery){
-    this->populate();
-  }
-
-  world::~world(){
-    for (std::vector< state* >::iterator it = this->states.begin() ; it != this->states.end(); ++it){
-     delete (*it);
-    } this->states.clear();
-
-    if( cbegin != NULL ){
-      delete[] cbegin;
-      cbegin = NULL;
-    }
+  bool world::getGrid(std::vector<bool>const& grid, size pose) const{
+    return this->dirty_cells_2_entries.find(pose) == this->dirty_cells_2_entries.end() ? true : grid[this->dirty_cells_2_entries.at(pose)];
   }
 
   double world::reward(state* const s, action a)  const{
     std::vector<bool> grid = s->getGrid();
     bool  status = s->getBase();
 
-    int i;
-    for(i=0; i<this->width * this->height && status; ++i){
-      status &= grid[i];
+    for(auto p : this->dirty_cells_2_entries){
+      status &= grid[p.second];
+      if( !status ) break;
     }
 
     // final state
@@ -124,7 +134,7 @@ namespace cleaner{
 
   bool world::compare(std::vector<bool>const& v1, std::vector<bool>const& v2, int pose) const{
     bool ok = true;
-    for(int i=0; i<v1.size() && ok; ++i) if(pose != i) ok &= v1[i] == v2[i];
+    for(size i=0; i<v1.size() && ok; ++i) if(pose != i) ok &= v1[i] == v2[i];
     return ok;
   }
 
@@ -231,13 +241,13 @@ namespace cleaner{
       if( b < 2  && ss==s){
         return 1.0;
       }
-      else if( (x == xx) && (y == yy) && this->compare(g,gg) && g[s->getPose()] && (bb==b-2) ){
+      else if( (x == xx) && (y == yy) && this->compare(g,gg) && this->getGrid(g,s->getPose()) && (bb==b-2) ){
         return 1.0;
       }
-      else if( x == xx && y == yy && this->compare(g,gg) && g[s->getPose()] == false && bb==b-2){
+      else if( x == xx && y == yy && this->compare(g,gg) && this->getGrid(g,s->getPose()) == false && bb==b-2){
         return this->proba;
       }
-      else if( x == xx && y == yy && this->compare(g,gg,s->getPose()) && g[s->getPose()] == false && gg[ss->getPose()] == true && bb==b-2){
+      else if( x == xx && y == yy && this->compare(g,gg,s->getPose()) && this->getGrid(g,s->getPose()) == false && this->getGrid(gg, ss->getPose()) == true && bb==b-2){
         return 1-this->proba;
       }
       break;
