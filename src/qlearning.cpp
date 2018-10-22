@@ -37,9 +37,10 @@ namespace cleaner{
       double r;
 
       for (int i = 0; i < episodes; i++){
+        printf("episode en cours : %d\n",i);
         backup(s,a,ss,r);
         s = ss;
-        printf("episode en cours : %d\n",i);
+
       }
     }
 
@@ -74,8 +75,8 @@ namespace cleaner{
     void qlearning::backup(int s, int a, int ss, double r){
       double maxQt1;
       double d;
-      for(int i = 0; i<100; i++) { // 100 est la taille d'un episode
-        printf("getValueAt(0) = %f\n", getValueAt(0));
+      for(int i = 0; i<50; i++) { // 100 est la taille d'un episode
+        //printf("getValueAt(0) = %f\n", getValueAt(0));
         a = greedy(s);
         w.execute(s, action(a), ss, r);
 
