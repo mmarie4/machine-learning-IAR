@@ -126,6 +126,18 @@ namespace cleaner{
       if(s->getGrid()[s->getPose()] == false && ( a == RIGHt || a == LEFT || a == UP || a == DOWN)){
         phiResult[5] = 0.25;
       }
+      if(s->getGrid()[s->getPose() ] == false && s->getGrid()[s->getPose() + 1] == true &&  a == RIGHT){
+        phiResult[6] = 0.25;
+      }
+      if(s->getGrid()[s->getPose() ] == false && s->getGrid()[s->getPose() - 1] == true &&  a == LEFT){
+        phiResult[7] = 0.25;
+      }
+      if(s->getGrid()[s->getPose() ] == false && s->getGrid()[s->getPose() + 1] == true &&  a != RIGHT){
+        phiResult[8] = -0.25;
+      }
+      if(s->getGrid()[s->getPose() ] == false && s->getGrid()[s->getPose() - 1] == true &&  a != LEFT){
+        phiResult[9] = -0.25;
+      }
       /*
       // check caracteristics
       if(s->getBattery() == 0 && a != CHARGE && s->getBase()) {
@@ -142,7 +154,7 @@ namespace cleaner{
       }
       */
       if(a == WAIT) {
-        phiResult[6] = -0.5;
+        phiResult[10] = -0.5;
       }
     }
 
