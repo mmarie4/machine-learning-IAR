@@ -90,19 +90,12 @@ namespace cleaner{
       double d;
 
       for(s=0; s<this->w.getNumStates(); ++s){
-        if(w.dirty_cells_2_entries[s] != 0) {
-          printf("w.dirty_cells_2_entries[s] = %d pour s = %d and size of dirty_cells = %d\n", w.dirty_cells_2_entries[s], s, w.dirty_cells_2_entries.size());
-        }
         for(a=0; a<action::END; ++a){
           if( this->pf[s][a] > -1 ){
             old = QF(w.getState(s), action(a));
             cumul = this->getReturn(this->pf[s][a]);
             this->jf[s][a].second ++;
             this->jf[s][a].first += cumul;
-
-            if(action(a) != LEFT && action(a) != RIGHT && action(a) != UP && action(a) != DOWN) {
-              //printf("============================================================================================> NOT MOVING\n");
-            }
             
             // mettre a jour theta
             d = cumul - old;
@@ -110,6 +103,8 @@ namespace cleaner{
           }
         }
       }
+      printf("getValueAt(0) = %f\n", getValueAt(0));
+
     }
 
     void montecarlo::init(){
@@ -125,28 +120,35 @@ namespace cleaner{
       }
     }
 
-    // Update phiResult depending on the current state and action
+      // Update phiResult depending on the current state and action
     void montecarlo::updatePhi(state* s, action a) {
       // Empty phi
       for(int i = 0; i<this->SIZE; i++) {
         phiResult[i] = 0;
       }
-
-      // check caracteristics
-      if(s->getBattery() == 0 && a != CHARGE && s->getBase()) {
-        phiResult[0] = -1;
+      
+      if(s->getBattery() < 5 && s->getBase() && a != CHARGE ) {
+        phiResult[0] = -0.5;
       }
-      if(s->getBattery() < 2 && a == CHARGE && s->getBase()) {
-        phiResult[1] = 0.5;
+      
+      if(s->getBattery() < 5 && s->getBase() && a == CHARGE ) {
+        phiResult[1] = 0.9;
       }
-      if(w.dirty_cells_2_entries[s->getPose()]>=0 && a != CLEAN) {
+      
+      if(s->getGrid()[s->getPose()] == true && a != CLEAN){
         phiResult[2] = -0.5;
       }
-      if(w.dirty_cells_2_entries[s->getPose()]<0 && a != LEFT && a != RIGHT && a != DOWN && a != UP) {
-        phiResult[3] = -0.5;
+      
+      if(s->getGrid()[s->getPose()] == true && a == CLEAN){
+        phiResult[3] = 0.7;
       }
-      if(a == WAIT) {
-        phiResult[4] = -0.3;
+      
+      if(s->getGrid()[s->getPose()] == false && ( a != RIGHT && a != LEFT && a != UP && a != DOWN)){
+        phiResult[4] = -0.9;
+      }
+
+      if(s->getGrid()[s->getPose()] == false && ( a == RIGHT && a == LEFT && a == UP && a == DOWN)){
+        phiResult[5] = 0.9;
       }
     }
 

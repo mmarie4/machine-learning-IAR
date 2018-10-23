@@ -37,7 +37,7 @@ namespace cleaner{
     void init();
 
     // caracteristics for large scale algo
-    int SIZE = 11;
+    int SIZE = 6;
     double* theta;
     double* phiResult;
     void updatePhi(state* s, action a);

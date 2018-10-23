@@ -87,8 +87,9 @@ namespace cleaner{
         updateTheta(s, d, a);
 
         s = ss;
-        //printf("i = %d\n",i);
-        //displayTab(this->theta, this->SIZE, "Theta\0");
+        
+        //displayTab(this->phiResult, this->SIZE, "Theta\0");
+        //printf("w.getState(s)->getPose() : %d\n", w.getState(s)->getPose());
       }
     }
 
@@ -107,54 +108,29 @@ namespace cleaner{
       for(int i = 0; i<this->SIZE; i++) {
         phiResult[i] = 0;
       }
-
-      if(s->getBattery() < 2 && s->getBase() && a != CHARGE ) {
-        phiResult[0] = -1;
+      
+      if(s->getBattery() < 5 && s->getBase() && a != CHARGE ) {
+        phiResult[0] = -0.5;
       }
-      if(s->getBattery() < 2 && s->getBase() && a == CHARGE ) {
-        phiResult[1] = 0.25;
+      
+      if(s->getBattery() < 5 && s->getBase() && a == CHARGE ) {
+        phiResult[1] = 0.9;
       }
+      
       if(s->getGrid()[s->getPose()] == true && a != CLEAN){
-        phiResult[2] = - 0.5;
-      }
-      if(s->getGrid()[s->getPose()] == true && a == ClEAN){
-        phiResult[3] = 0.25;
-      }
-      if(s->getGrid()[s->getPose()] == false && ( a != RIGHt || a != LEFT || a != UP || a != DOWN)){
-        phiResult[4] = -0.25;
-      }
-      if(s->getGrid()[s->getPose()] == false && ( a == RIGHt || a == LEFT || a == UP || a == DOWN)){
-        phiResult[5] = 0.25;
-      }
-      if(s->getGrid()[s->getPose() ] == false && s->getGrid()[s->getPose() + 1] == true &&  a == RIGHT){
-        phiResult[6] = 0.25;
-      }
-      if(s->getGrid()[s->getPose() ] == false && s->getGrid()[s->getPose() - 1] == true &&  a == LEFT){
-        phiResult[7] = 0.25;
-      }
-      if(s->getGrid()[s->getPose() ] == false && s->getGrid()[s->getPose() + 1] == true &&  a != RIGHT){
-        phiResult[8] = -0.25;
-      }
-      if(s->getGrid()[s->getPose() ] == false && s->getGrid()[s->getPose() - 1] == true &&  a != LEFT){
-        phiResult[9] = -0.25;
-      }
-      /*
-      // check caracteristics
-      if(s->getBattery() == 0 && a != CHARGE && s->getBase()) {
-        phiResult[0] = -1;
-      }
-      if(s->getBattery() < 2 && a == CHARGE && s->getBase()) {
-        phiResult[1] = 0.5;
-      }
-      if(w.dirty_cells_2_entries[s->getPose()]>=0 && a != CLEAN) {
         phiResult[2] = -0.5;
       }
-      if(w.dirty_cells_2_entries[s->getPose()]<0 && a != LEFT && a != RIGHT && a != DOWN && a != UP) {
-        phiResult[3] = -0.5;
+      
+      if(s->getGrid()[s->getPose()] == true && a == CLEAN){
+        phiResult[3] = 0.7;
       }
-      */
-      if(a == WAIT) {
-        phiResult[10] = -0.5;
+      
+      if(s->getGrid()[s->getPose()] == false && ( a != RIGHT && a != LEFT && a != UP && a != DOWN)){
+        phiResult[4] = -0.9;
+      }
+
+      if(s->getGrid()[s->getPose()] == false && ( a == RIGHT && a == LEFT && a == UP && a == DOWN)){
+        phiResult[5] = 0.9;
       }
     }
 

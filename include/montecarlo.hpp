@@ -52,7 +52,7 @@ namespace cleaner{
     double learning_rate;
 
     // caracteristics for large scale algo
-    int SIZE = 5;
+    int SIZE = 6;
     double* theta;
     double* phiResult;
     void updatePhi(state* s, action a);
